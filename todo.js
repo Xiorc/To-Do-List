@@ -5,10 +5,6 @@ const toDoForm = document.querySelector('.js-toDoForm'),
 const TODOS_LS = 'toDos';
 let toDos = [];
 
-function saveToDos() {
-  localStorage.setItem(TODOS_LS, JSON.stringify(toDos));
-}
-
 function delToDos(event) {
   const btn = event.target;
   const li = btn.parentNode;
@@ -20,14 +16,18 @@ function delToDos(event) {
   saveToDos();
 }
 
+function saveToDos() {
+  localStorage.setItem(TODOS_LS, JSON.stringify(toDos));
+}
+
 function makeToDos(text) {
   const li = document.createElement('li');
   const span = document.createElement('span');
   const delBtn = document.createElement('button');
   const newId = toDos.length + 1;
+  span.innerText = text;
   delBtn.innerText = 'x';
   delBtn.addEventListener('click', delToDos);
-  span.innerText = text;
   li.id = newId;
   li.appendChild(span);
   li.appendChild(delBtn);
@@ -35,9 +35,16 @@ function makeToDos(text) {
   const toDoObj = {
     text: text,
     id: newId
-  }
+  };
   toDos.push(toDoObj);
   saveToDos();
+}
+
+function handleSubmit(event) {
+  event.preventDefault();
+  const currentValue = toDoInput.value;
+  makeToDos(currentValue);
+  toDoInput.value = '';
 }
 
 function loadToDos() {
@@ -46,15 +53,8 @@ function loadToDos() {
     const parsedToDos = JSON.parse(loadedToDos);
     parsedToDos.forEach(function(toDo) {
       makeToDos(toDo.text);
-    })
+    });
   }
-}
-
-function handleSubmit(event) {
-  event.preventDefault();
-  const currentValue = toDoInput.value;
-  makeToDos(currentValue);
-  toDoInput.value = '';
 }
 
 function init() {
